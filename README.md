@@ -1,13 +1,18 @@
 # Netflix-Clone-Project
-DevSecOps Project - Netflix Clone by Cloud Champ
+                                                        ![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/324c5356-24a0-4179-89a2-f806ec752736)
 
 Github URL: https://github.com/N4si/DevSecOps-Project
 
-    sudo apt-get update
+This Project is devided in 3 parts. Dev, Sec, Ops
 
+**Part 1 - Dev**
+    
+    sudo apt update -y
     git clone https://github.com/N4si/DevSecOps-Project.git
 
-Install Docker
+Go Inside the directory
+
+**Install Docker**
 
     sudo apt-get update
     sudo apt-get install docker.io -y
@@ -15,23 +20,29 @@ Install Docker
     newgrp docker
     sudo chmod 777 /var/run/docker.sock
 
+    sudo reboot
+
 Go to The movie database (TMDB)
 
     https://www.themoviedb.org/
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/791326d6-777e-4530-9efa-7004c60e8732)
+Get the API Token 
 
-    docker build --build-arg TMDB_V3_API_KEY=55e71f920f05dd2ed29334de060ad77d -t netflix .
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/fda4671a-729c-4faa-bdf7-961640abf8fa)
 
-    docker run -d -p 8081:80 a67754fda871
+    docker build --build-arg TMDB_V3_API_KEY=<API KEY FROM TMDB> -t netflix .
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/ff1ffd7e-9ac0-401f-9c89-e2db967f6e47)
+    docker run -d -p 8081:80 <docker image id>
 
-Aws Public IP with port 8081
+Run the docker app with Aws-Public-IP:8081
 
 ![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/5d0d3289-2a2f-4272-a9d0-e97c617c5cdc)
 
-Run Sonarqube for Security Part
+**Part 2 - Security**
+
+For Security we use 2 tools SonarQube and Trivy
+
+SonarQube
 
         docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 
@@ -40,8 +51,8 @@ Run Sonarqube for Security Part
         Username / Password: admin
         New Password: pass
 
-Install Trivy
-
+Trivy
+    
         sudo apt-get install wget apt-transport-https gnupg lsb-release
         wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
         echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
@@ -56,8 +67,9 @@ To scan the image using trivy run below command, Image is netflix image, If foun
 
         trivy image a67754fda871
 
-Install Jenkins on the EC2 instance to automate deployment: Install Java
+**Install Jenkins on the EC2 instance to automate deployment:**
 
+        #Java
         sudo apt update
         sudo apt install fontconfig openjdk-17-jre
         java -version
@@ -76,11 +88,12 @@ Install Jenkins on the EC2 instance to automate deployment: Install Java
         sudo systemctl start jenkins
         sudo systemctl enable jenkins 
 
-        Jenkins Pass: 318b9e0132f24ebe8b217e37ab68eddd
 
-Install Necessary Plugins in Jenkins:
+Jenkins Pass: f1e6d5af91e64c5485451388b03d22fb
 
-Goto Manage Jenkins →Plugins → Available Plugins →
+**Install Necessary Plugins in Jenkins:**
+
+Goto Manage Jenkins → Plugins → Available Plugins →
 
 Install below plugins
 
@@ -92,99 +105,27 @@ Install below plugins
 
 4 Email Extension Plugin
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/a8a932ac-e846-4f61-a710-7d60366129ec)
+5 Docker, Docker Commons, Docker PipelineVersion, Docker API
 
-Configure Java and Nodejs in Global Tool Configuration
+**Configure Java and Nodejs in Global Tool Configuration**
 
-Goto Manage Jenkins → Tools → Install JDK(17) and NodeJs(16)→ Click on Apply and Save
+Goto Manage Jenkins → Tools → Install JDK(17) and NodeJs(16) → Click on Apply and Save
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/35ed9449-8f53-4097-bcba-ead5763bb956)
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/7421f591-1689-4f95-98f8-066ea096b4d8)
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/f6dc7498-f8d4-4538-843c-2523ae99cd36)
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/16884ccc-cbc0-43e9-ae9a-3a1026f00d36)
 
-SonarQube
-Create the token
+**SonarQube**
 
-Goto SonarQube > Administration > Security > Users > Generate token named Jenkins
+Goto SonarQube → Administration → Security → Users → Generate token named Jenkins
 
-squ_554da5bf814059759bddc7bfd645e550aa2224ac
+sonar-token: squ_d4313c119aadaa7000c531593a0260155ab590f2
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/6edd2740-b0a4-4761-af83-cdc8367fca11)
-
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/62c3ce65-df5a-4788-bffd-c9078c149a79)
 
 Goto Jenkins Dashboard → Manage Jenkins → Credentials → Add Secret Text. It should look like this
 
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/161a566a-3677-4802-ab7e-9251485c9240)
-
-After adding sonar token
-
-Click on Apply and Save
-
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/0d360347-6e0a-4a11-b890-934d155fc2f9)
-
-The Configure System option is used in Jenkins to configure different server
-
-Global Tool Configuration is used to configure different tools that we install using Plugins
-
-We will install a sonar scanner in the tools.
-
-Manage Jenkins > Tools > SonarQube Scanner installations
-
-![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/fae5d998-f2a6-4c3b-b66d-495b85674114)
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/9fb3e506-0ff0-4299-b28c-e796a9bc621c)
 
 
-So the pipeline is ready to deploy the application 
-
-Configure CI/CD Pipeline in Jenkins:
-
-Create a CI/CD pipeline in Jenkins to automate your application deployment.
-
-Dashboard > NewItem > paste the code > apply & save > run the pipeline (build now)
-
-        pipeline {
-    agent any
-    tools {
-        jdk 'jdk17'
-        nodejs 'node16'
-    }
-    environment {
-        SCANNER_HOME = tool 'sonar-scanner'
-    }
-    stages {
-        stage('clean workspace') {
-            steps {
-                cleanWs()
-            }
-        }
-        stage('Checkout from Git') {
-            steps {
-                git branch: 'main', url: 'https://github.com/N4si/DevSecOps-Project.git'
-            }
-        }
-        stage("Sonarqube Analysis") {
-            steps {
-                withSonarQubeEnv('sonar-server') {
-                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
-                    -Dsonar.projectKey=Netflix'''
-                }
-            }
-        }
-        stage("quality gate") {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
-                }
-            }
-        }
-        stage('Install Dependencies') {
-            steps {
-                sh "npm install"
-            }
-        }
-    }
-}
-
-
-
-Create a Jenkins webhook
 
