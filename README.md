@@ -1,5 +1,6 @@
 # Netflix-Clone-Project
-                                                        ![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/324c5356-24a0-4179-89a2-f806ec752736)
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/324c5356-24a0-4179-89a2-f806ec752736)
 
 Github URL: https://github.com/N4si/DevSecOps-Project
 
