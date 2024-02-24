@@ -108,6 +108,12 @@ Install below plugins
 
 5 Docker, Docker Commons, Docker PipelineVersion, Docker API
 
+6 OWASP Dependency-Check
+
+**Setup Docker Credentials in Jenkins**
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/96ce39c4-2e11-4ad0-89e8-6eb592d37f05)
+
 **Configure Java and Nodejs in Global Tool Configuration**
 
 Goto Manage Jenkins → Tools → Install JDK(17) and NodeJs(16) → Click on Apply and Save
@@ -128,5 +134,93 @@ Goto Jenkins Dashboard → Manage Jenkins → Credentials → Add Secret Text. I
 
 ![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/9fb3e506-0ff0-4299-b28c-e796a9bc621c)
 
+**Goto Manage Jenkins → Systems → sonarqube servers → Add sonarqube**
 
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/e06734b6-117b-40c4-a5e8-1cfd54d3874c)
+
+Manage Jenkins → Tools → SonarQube Scanner installations
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/c8abce43-b3a1-4453-a8f7-499bf09c5ef4)
+
+Create Project in Sonar named "Netflix" → Locally → Generate 
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/f66dd65b-4422-4aaa-8a69-20e4d53420c3)
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/aaf103fe-9f0f-4a66-9802-96efd4596223)
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/83c9e69b-5640-4a42-aae9-1af45ace69c6)
+
+Manage Jenkins → Tools → 
+
+Dependency-Check installations
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/e3d1bac4-3874-4c9e-8bd0-e49bc0066949)
+
+Docker
+
+![image](https://github.com/sunnyvalechha/Netflix-Clone-Project/assets/59471885/136d2c95-e3aa-4d4b-b3ad-3bf520fab15b)
+
+**Create Jenkins Pipeline**
+
+New Item → Pipeline → Paste the 2nd code which automate the pipline → Change the docker account name and image name run pipeline
+
+
+
+**Monitoring**
+
+Launch new ec2 instance > t2.medium named Monitoring-cicd
+
+Install Prometheus and Grafana:
+
+First, create a dedicated Linux user for Prometheus and download Prometheus:
+
+        sudo useradd --system --no-create-home --shell /bin/false prometheus
+        wget https://github.com/prometheus/prometheus/releases/download/v2.47.1/prometheus-2.47.1.linux-amd64.tar.gz
+
+Extract Prometheus files, move them, and create directories:
+
+        tar -xvf prometheus-2.47.1.linux-amd64.tar.gz
+        cd prometheus-2.47.1.linux-amd64/
+        sudo mkdir -p /data /etc/prometheus
+        sudo mv prometheus promtool /usr/local/bin/
+        sudo mv consoles/ console_libraries/ /etc/prometheus/
+        sudo mv prometheus.yml /etc/prometheus/prometheus.yml
+
+        sudo service prometheus
+
+        ls -lrth /etc/prometheus/
+
+        sudo chown -R prometheus:prometheus /etc/prometheus/ /data/
+
+        sudo vim /etc/systemd/system/prometheus.service
+
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/local/bin/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/data \
+  --web.console.templates=/etc/prometheus/consoles \
+  --web.console.libraries=/etc/prometheus/console_libraries \
+  --web.listen-address=0.0.0.0:9090 \
+  --web.enable-lifecycle
+
+[Install]
+WantedBy=multi-user.target
+
+
+sudo systemctl enable prometheus
+sudo systemctl start prometheus
+sudo systemctl status prometheus.service
 
